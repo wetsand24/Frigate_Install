@@ -1,0 +1,66 @@
+# Frigate 0.18 config for one Reolink doorbell/camera, with the AI on an Intel GPU.
+# Change ONE thing: CAMERA_IP (one place below). Your camera login goes in the .env file, not here.
+
+mqtt:
+  enabled: false
+
+# AI: check pictures with OpenVINO on the Intel graphics chip (no Coral needed)
+detectors:
+  ov:
+    type: openvino
+    device: GPU
+
+# The AI model that ships with Frigate (nothing to download)
+model:
+  width: 300
+  height: 300
+  input_tensor: nhwc
+  input_pixel_format: bgr
+  path: /openvino-model/ssdlite_mobilenet_v2.xml
+  labelmap_path: /openvino-model/coco_91cl_bkgr.txt
+
+# Unpack the camera video on the graphics chip too
+ffmpeg:
+  hwaccel_args: preset-vaapi
+
+# Connect to the camera ONCE and share that connection with everything else
+go2rtc:
+  streams:
+    doorbell:
+      - "ffmpeg:http://CAMERA_IP/flv?port=1935&app=bcs&stream=channel0_main.bcs&user={FRIGATE_CAMERA_USER}&password={FRIGATE_CAMERA_PASSWORD}#video=copy#audio=copy#audio=opus"
+
+cameras:
+  doorbell:
+    ffmpeg:
+      inputs:
+        - path: rtsp://127.0.0.1:8554/doorbell
+          input_args: preset-rtsp-restream
+          roles: [record, detect]
+    detect:
+      enabled: true
+      width: 1280
+      height: 960   # Reolink doorbells are 4:3. For a 16:9 camera use 1280 x 720
+      fps: 5
+    objects:
+      track: [person, car, dog, cat]
+    review:
+      alerts:
+        labels: [person]
+    record:
+      enabled: true
+      continuous:
+        days: 5
+      motion:
+        days: 7
+      alerts:
+        retain:
+          days: 14
+      detections:
+        retain:
+          days: 14
+    snapshots:
+      enabled: true
+      retain:
+        default: 14
+
+version: 0.18-0
