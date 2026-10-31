@@ -2,6 +2,8 @@
 
 The files from the video. Frigate records your camera on your own computer and uses the Intel graphics chip for the AI. You don't need a Coral or a cloud plan.
 
+▶️ Video: https://youtu.be/awyauSoTp1U
+
 ## Files
 
 | File | Where it goes on the server | What to change |
@@ -42,6 +44,19 @@ nano config/config.yml
 docker compose up -d
 docker logs frigate 2>&1 | grep -o 'Password: .*'
 ```
+
+**Rather download than copy-paste?** Instead of the `nano` lines, this puts the files straight on the server
+(run it after the `cd /opt/frigate` line, then still edit `.env` and `config/config.yml`):
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/wetsand24/Frigate_Install/main/compose.yaml
+curl -fsSL -o .env https://raw.githubusercontent.com/wetsand24/Frigate_Install/main/.env.example
+curl -fsSL -o config/config.yml https://raw.githubusercontent.com/wetsand24/Frigate_Install/main/config/config.yml
+nano .env                        # the camera user's password
+nano config/config.yml           # the camera's IP address
+```
+
+The camera script downloads the same way: `curl -fsSLO https://raw.githubusercontent.com/wetsand24/Frigate_Install/main/add-camera-user.sh`
 
 Then open `https://YOUR-SERVER-IP:8971`. The username is `admin`, and the password is the one from the log.
 
