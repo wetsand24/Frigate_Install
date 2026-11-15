@@ -4,6 +4,13 @@ The files from the video. Frigate records your camera on your own computer and u
 
 ▶️ Video: https://youtu.be/awyauSoTp1U
 
+## What you need
+
+- A computer that stays on, with an Intel processor with built-in graphics (6th gen or newer, with AVX2), running Debian or Ubuntu.
+- 4 GB RAM minimum (8 GB if you use face or license plate recognition).
+- Disk space for your recordings: an SSD or a surveillance hard drive (WD Purple, Seagate SkyHawk).
+- A camera that shares its video on your home network (I used a Reolink video doorbell).
+
 ## Files
 
 | File | Where it goes on the server | What to change |
